@@ -6,8 +6,22 @@
       "Type": "movie",
       "Poster": "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzMtYTJmNjg3Nzk5MzRiXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_SX300.jpg",
       "Year": "2009"
+    },
+    {
+      "Title": "The Matrix",
+      "imdbID": "tt0133093",
+      "Type": "movie",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+      "Year": "1999"
+    },
+    {
+      "Title": "Harry Potter and the Prisoner of Azkaban",
+      "imdbID": "tt0304141",
+      "Type": "movie",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMTY4NTIwODg0N15BMl5BanBnXkFtZTcwOTc0MjEzMw@@._V1_SX300.jpg",
+      "Year": "2004"
     }
   ],
-  "totalResults": "1",
+  "totalResults": "3",
   "Response": "True"
 }

@@ -39,7 +39,7 @@ describe("mock data tests", () => {
 
     cy.wait("@omdbCall").its("request.url").should("contain", "Avatar");
     cy.get("#movie-container").should("contain", "Avatar");
-    cy.get(".movie").should("have.length", 1);
+    cy.get(".movie").should("have.length", 3);
   });
 
   it("should not get mock data with incorrect url", () => {
@@ -67,7 +67,7 @@ describe("mock data tests", () => {
     cy.wait("@omdbCall");
 
     cy.get("#movie-container").should("exist");
-    cy.get(".movie").should("exist").should("have.length", 1);
+    cy.get(".movie").should("exist").should("have.length", 3);
     cy.get("h3").should("exist");
     cy.get("img").should("exist");
     cy.get(":nth-child(1) > h3").should("contain", "Avatar");
@@ -83,3 +83,25 @@ describe('api data tests', () => {
     cy.get('#movie-container').should('contain', 'Avatar');
   });
 });  
+
+describe("Sorting functionality tests", () => {
+  it("should sort movies by title in ascending order", () => {
+    cy.fixture("omdbResponse").then((response) => {
+      const sortedMovies = movieSort(response.Search);
+      // Verifiera att filmerna är sorterade i stigande ordning
+      for (let i = 1; i < sortedMovies.length; i++) {
+        expect(sortedMovies[i].Title > sortedMovies[i - 1].Title).to.be.true;
+      }
+    });
+  });
+
+  it("should sort movies by title in descending order", () => {
+    cy.fixture("omdbResponse").then((response) => {
+      const sortedMovies = movieSort(response.Search, false);
+      // Verifiera att filmerna är sorterade i fallande ordning
+      for (let i = 1; i < sortedMovies.length; i++) {
+        expect(sortedMovies[i].Title < sortedMovies[i - 1].Title).to.be.true;
+      }
+    });
+  });
+});
