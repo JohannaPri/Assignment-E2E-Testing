@@ -12,6 +12,14 @@
         <input type="text" id="searchText" placeholder="Skriv titel här" />
         <button type="submit" id="search">Sök</button>
       </form>
+      <div>
+        <label for="sortOrder">Sort Order:</label>
+        <select id="sortOrder">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+        <button id="sortButton">Sort Movies</button>
+      </div>
       <div id="movie-container"></div>
     </div>
     <script type="module" src="/src/ts/main.ts"></script>

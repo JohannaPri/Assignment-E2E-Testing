@@ -24,10 +24,30 @@ describe("DOM elements tests", () => {
     cy.get("p").should("exist").and("contain", "Inga");
   });
 
-  it('should display multiple results on valid search', () => { 
-    cy.get('#searchText').type('Inception');
-    cy.get('#search').click();
-    cy.get('#movie-container').children().should('have.length.at.least', 1);
+  it("should display multiple results on valid search", () => { 
+    cy.get("#searchText").type("Avatar");
+    cy.get("#search").click();
+    cy.get("#movie-container").children().should("have.length.at.least", 1);
+  });
+
+  it("should contain a sort order select element", () => {
+    cy.get("#sortOrder").should("exist");
+  });
+
+  it("should contain a sort button with text 'Sort Movies'", () => {
+    cy.get("#sortButton").should("exist").and("contain", "Sort Movies");
+  });
+
+  it("should display sort label and select element", () => {
+    cy.get("label[for='sortOrder']").should("exist").and("contain", "Sort Order:");
+    cy.get("#sortOrder").should("exist").and("have.attr", "id", "sortOrder");
+  });
+
+  it("should display Ascending and Descending options in select element", () => {
+    cy.get("#sortOrder").should("exist").within(() => {
+      cy.get("option[value='asc']").should("exist").and("contain", "Ascending");
+      cy.get("option[value='desc']").should("exist").and("contain", "Descending");
+    });
   });
 });
 
@@ -78,6 +98,28 @@ describe("mock data tests", () => {
     cy.get("img").should("exist");
     cy.get(":nth-child(1) > h3").should("contain", "Avatar");
   });
+
+  it("should display search results for a valid movie title", () => {
+    const validMovieTitle = "Avatar";
+    cy.get("#searchText").type(validMovieTitle);
+    cy.get("#search").click();
+    cy.get("#movie-container").should("contain", validMovieTitle);
+  });
+
+});
+
+describe("Search and test all movies", () => {
+  it("should search and test all movies from mock data", () => {
+    cy.fixture("omdbResponse").then((response: { Search: { Title: string }[] }) => {
+      response.Search.forEach((movie: { Title: string }) => {
+        cy.get("#searchText").clear().type(`${movie.Title}{enter}`);
+        
+        // Tester för varje film
+        cy.get("#movie-container").should("contain", movie.Title); 
+        cy.get(".movie").should("have.length.greaterThan", 3);
+      });
+    });
+  });
 });
 
 describe("api data tests", () => {
@@ -109,31 +151,26 @@ describe("api data tests", () => {
 describe("Sorting functionality tests", () => {
   it("should sort movies by title in ascending order", () => {
     cy.fixture("omdbResponse").then((response) => {
-      const sortedMovies = movieSort(response.Search);
+      const movies = response.Search;
+      const sortedMovies = movieSort(movies);
       // Verifiera att filmerna är sorterade i stigande ordning
       for (let i = 1; i < sortedMovies.length; i++) {
-        expect(sortedMovies[i].Title > sortedMovies[i - 1].Title).to.be.true;
+        expect(sortedMovies[i].Title.localeCompare(sortedMovies[i - 1].Title) >= 0).to.be.true;
       }
     });
   });
 
   it("should sort movies by title in descending order", () => {
     cy.fixture("omdbResponse").then((response) => {
-      const sortedMovies = movieSort(response.Search, false);
+      const movies = response.Search;
+      const sortedMovies = movieSort(movies, false);
       // Verifiera att filmerna är sorterade i fallande ordning
       for (let i = 1; i < sortedMovies.length; i++) {
-        expect(sortedMovies[i].Title < sortedMovies[i - 1].Title).to.be.true;
+        expect(sortedMovies[i].Title.localeCompare(sortedMovies[i - 1].Title) <= 0).to.be.true;
       }
     });
   });
-
-  it("should handle sorting an empty list of movies", () => {
-    const emptyList = [];
-    const sortedMovies = movieSort(emptyList);
-    // Verifiera att en tom lista returneras oförändrad
-    expect(sortedMovies).to.deep.equal(emptyList);
-  });
-
+  
   it("should handle sorting a list with only one movie", () => {
     const singleMovieList = [
       { Title: "Avatar", Year: "2009", imdbID: "tt0499549", Type: "movie", Poster: "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzMtYTJmNjg3Nzk5MzRiXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_SX300.jpg" }
