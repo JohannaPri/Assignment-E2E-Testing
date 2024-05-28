@@ -32,12 +32,11 @@ const handleSort = () => {
         Year: element.dataset.year || "",
       });
     }
-  });
+  }); 
 
   // Sortera filmerna
   const sortedMovies = movieSort(movies, sortOrder);
 
-  // Rensa befintliga filmer från DOMen
   // Rensa befintliga filmer från DOMen
   const movieContainer = document.getElementById("movie-container");
   if (movieContainer instanceof HTMLDivElement) {
