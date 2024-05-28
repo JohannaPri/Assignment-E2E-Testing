@@ -1,30 +1,33 @@
-import { movieSort } from '../../src/ts/functions';
+import { movieSort } from "../../src/ts/functions";
 
 beforeEach(() => {
-  cy.visit('/');
+  cy.visit("/");
 });
 
-describe('dom elements tests', () => {
-  it('should contain input field', () => {
-    cy.get('#searchText').should('exist');
+describe("DOM elements tests", () => {
+  it("should contain an input field", () => {
+    cy.get("#searchText").should("exist");
   });
 
-  it('should contain submit button', () => {
-    cy.get('#search').should('exist').should('contain', 'Sök');
+  it("should contain a submit button with text 'Sök'", () => {
+    cy.get("#search").should("exist").and("contain", "Sök");
   });
 
-  it('should be able to type in searchText ', () => {
-    cy.get('#searchText').should('exist').type('something');
-    cy.get('#searchText').should('have.value', 'something');
+  it("should be able to type in the search input field", () => {
+    cy.get("#searchText").type("something").should("have.value", "something");
   });
 
-  it('should display error message', () => {
-    cy.get('#searchText').type(' ');
+  it("should display an error message when the search text is empty", () => {
+    cy.get("#searchText").type(" ");
+    cy.get("#search").click();
+    cy.get("#movie-container").should("exist");
+    cy.get("p").should("exist").and("contain", "Inga");
+  });
 
+  it('should display multiple results on valid search', () => { 
+    cy.get('#searchText').type('Inception');
     cy.get('#search').click();
-
-    cy.get('#movie-container').should('exist');
-    cy.get('p').should('exist').should('contain', 'Inga');
+    cy.get('#movie-container').children().should('have.length.at.least', 1);
   });
 });
 
@@ -77,29 +80,29 @@ describe("mock data tests", () => {
   });
 });
 
-describe('api data tests', () => {
-  it('should get api data with correct url', () => {
-    cy.get('#searchText').type('Avatar');
+describe("api data tests", () => {
+  it("should get api data with correct url", () => {
+    cy.get("#searchText").type("Avatar");
 
-    cy.get('#search').click();
+    cy.get("#search").click();
 
-    cy.get('#movie-container').should('contain', 'Avatar');
+    cy.get("#movie-container").should("contain", "Avatar");
   });
 
-  it('should not get api data with incorrect url', () => {
+  it("should not get api data with incorrect url", () => {
     cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
       statusCode: 404,
       body: {},
       delayMs: 1000,
     }).as("omdbCall");
     
-    cy.get('#searchText').type(' ');
-    cy.get('#search').click();
+    cy.get("#searchText").type(" ");
+    cy.get("#search").click();
     
     cy.wait("@omdbCall");
     
     // Kontrollera att inga filmer visas
-    cy.get('.movie').should('not.exist');
+    cy.get(".movie").should("not.exist");
   });
 });  
 
