@@ -49,6 +49,73 @@ describe("DOM elements tests", () => {
       cy.get("option[value='desc']").should("exist").and("contain", "Descending");
     });
   });
+
+  it("should sort movies in ascending order when 'Ascending' is selected", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
+      fixture: "omdbResponse",
+    }).as("omdbCall");
+
+    cy.get("#searchText").type("Avatar");
+    cy.get("#search").click();
+    cy.wait("@omdbCall");
+
+    cy.get("#sortOrder").select("asc");
+    cy.get("#sortButton").click();
+
+    cy.get("#movie-container .movie h3").then((titles) => {
+      const texts = [...titles].map(title => title.textContent?.trim() || "");
+      const sortedTexts = [...texts].sort();
+      expect(texts).to.deep.equal(sortedTexts);
+    });
+  });
+
+  it("should sort movies in descending order when 'Descending' is selected", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
+      fixture: "omdbResponse",
+    }).as("omdbCall");
+
+    cy.get("#searchText").type("Avatar");
+    cy.get("#search").click();
+    cy.wait("@omdbCall");
+
+    cy.get("#sortOrder").select("desc");
+    cy.get("#sortButton").click();
+
+    cy.get("#movie-container .movie h3").then((titles) => {
+      const texts = [...titles].map(title => title.textContent?.trim() || "");
+      const sortedTexts = [...texts].sort().reverse();
+      expect(texts).to.deep.equal(sortedTexts);
+    });
+  });
+
+  it("should not throw error when sorting without selecting sort order", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
+      fixture: "omdbResponse",
+    }).as("omdbCall");
+
+    cy.get("#searchText").type("Avatar");
+    cy.get("#search").click();
+    cy.wait("@omdbCall");
+
+    cy.get("#sortButton").click();
+
+    cy.get("#movie-container .movie").should("have.length", 3);
+  });
+
+  it("should maintain search results after sorting", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
+      fixture: "omdbResponse",
+    }).as("omdbCall");
+
+    cy.get("#searchText").type("Avatar");
+    cy.get("#search").click();
+    cy.wait("@omdbCall");
+
+    cy.get("#sortOrder").select("asc");
+    cy.get("#sortButton").click();
+    
+    cy.get("#movie-container").should("contain", "Avatar");
+  });
 });
 
 describe("mock data tests", () => {
