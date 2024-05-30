@@ -172,7 +172,6 @@ describe("mock data tests", () => {
     cy.get("#search").click();
     cy.get("#movie-container").should("contain", validMovieTitle);
   });
-
 });
 
 describe("Search and test all movies", () => {
