@@ -189,6 +189,39 @@ describe("Search and test all movies", () => {
   });
 });
 
+describe("Error handling", () => {
+  it("should display 'Inga sökresultat att visa' message when there are no search results", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", { 
+      fixture: "noResponse",
+    }).as("omdbCall");
+
+    cy.get("#searchText").type("Invalid Movie Title"); 
+    cy.get("#search").click();
+
+    cy.wait("@omdbCall");
+
+    cy.get("#movie-container").should("exist");
+    cy.get("p").should("exist").and("contain", "Inga sökresultat att visa");
+  });
+
+  it("should handle internal server error and display no result", () => {
+    cy.intercept("GET", "http://omdbapi.com/?apikey=416ed51a&s=*", {
+      statusCode: 500, 
+      body: {}, 
+      delayMs: 1000,
+    }).as("omdbCall");
+
+    cy.visit("/"); 
+
+    cy.get("#searchText").type("test search");
+    cy.get("#search").click();
+
+    cy.wait("@omdbCall");
+
+    cy.get("#movie-container").should("contain", "Inga sökresultat att visa");
+  });
+}); 
+
 describe("api data tests", () => {
   it("should get api data with correct url", () => {
     cy.get("#searchText").type("Avatar");
@@ -247,3 +280,4 @@ describe("Sorting functionality tests", () => {
     expect(sortedMovies).to.deep.equal(singleMovieList);
   });
 });
+
