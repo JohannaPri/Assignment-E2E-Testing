@@ -280,4 +280,3 @@ describe("Sorting functionality tests", () => {
     expect(sortedMovies).to.deep.equal(singleMovieList);
   });
 });
-
