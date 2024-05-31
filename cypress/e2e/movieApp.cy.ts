@@ -142,7 +142,6 @@ describe("mock data tests", () => {
     
     cy.wait("@omdbCall");
     
-    // Kontrollera att inga filmer visas
     cy.get(".movie").should("have.length", 0);
     
     // Kontrollera att felmeddelandet visas
